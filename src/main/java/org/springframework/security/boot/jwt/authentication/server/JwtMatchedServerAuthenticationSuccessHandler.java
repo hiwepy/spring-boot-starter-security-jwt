@@ -34,7 +34,7 @@ import org.springframework.security.boot.utils.SubjectUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.WebFilterExchange;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 
 import reactor.core.publisher.Mono;
 
