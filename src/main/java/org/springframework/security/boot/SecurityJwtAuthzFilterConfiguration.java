@@ -158,8 +158,8 @@ public class SecurityJwtAuthzFilterConfiguration {
 		@Bean
 		@Order(SecurityProperties.DEFAULT_FILTER_ORDER + 80)
 		public SecurityFilterChain jwtAuthzSecurityFilterChain(HttpSecurity http) throws Exception {
-	    	
-   	    	http.antMatcher(authzProperties.getPathPattern())
+
+			http = http.antMatcher(authzProperties.getPathPattern())
    	        	.exceptionHandling()
    	        	.authenticationEntryPoint(authenticationEntryPoint)
    	        	.and()
