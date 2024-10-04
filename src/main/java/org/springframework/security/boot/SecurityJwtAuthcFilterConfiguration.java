@@ -1,8 +1,6 @@
 package org.springframework.security.boot;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.biz.web.servlet.i18n.LocaleContextFilter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -31,13 +29,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 @AutoConfigureBefore({ SecurityFilterAutoConfiguration.class })
@@ -54,8 +54,7 @@ public class SecurityJwtAuthcFilterConfiguration {
 	@Configuration
 	@ConditionalOnProperty(prefix = SecurityJwtAuthcProperties.PREFIX, value = "enabled", havingValue = "true")
 	@EnableConfigurationProperties({ SecurityBizProperties.class, SecurityJwtAuthcProperties.class })
-    @Order(SecurityProperties.DEFAULT_FILTER_ORDER + 9)
-	static class JwtAuthcWebSecurityConfigurerAdapter extends WebSecurityBizConfigurerAdapter {
+	static class JwtAuthcWebSecurityCustomizerAdapter extends WebSecurityCustomizerAdapter {
     	
 		private final SecurityJwtAuthcProperties authcProperties;
 		
@@ -70,7 +69,7 @@ public class SecurityJwtAuthcFilterConfiguration {
 		private final SessionAuthenticationStrategy sessionAuthenticationStrategy;
 		
 		
-		public JwtAuthcWebSecurityConfigurerAdapter(
+		public JwtAuthcWebSecurityCustomizerAdapter(
 				
 				SecurityBizProperties bizProperties,
    				SecurityJwtAuthcProperties authcProperties,
@@ -147,8 +146,9 @@ public class SecurityJwtAuthcFilterConfiguration {
 	        return authenticationFilter;
 	    }
 
-	    @Override
-		public void configure(HttpSecurity http) throws Exception {
+		@Bean
+		@Order(SecurityProperties.DEFAULT_FILTER_ORDER + 9)
+		public SecurityFilterChain jwtAuthcSecurityFilterChain(HttpSecurity http) throws Exception {
 	    	
    	    	http.antMatcher(authcProperties.getPathPattern())
    	        	.exceptionHandling()
@@ -163,12 +163,13 @@ public class SecurityJwtAuthcFilterConfiguration {
    	    	super.configure(http, authcProperties.getCsrf());
    	    	super.configure(http, authcProperties.getHeaders());
 	    	super.configure(http);
-	    }
-	    
-	    @Override
-	    public void configure(WebSecurity web) throws Exception {
-	    	super.configure(web);
-	    }
+			return http.build();
+		}
+
+		@Override
+		public void customize(WebSecurity web) {
+			super.customize(web);
+		}
 		
 	}
 

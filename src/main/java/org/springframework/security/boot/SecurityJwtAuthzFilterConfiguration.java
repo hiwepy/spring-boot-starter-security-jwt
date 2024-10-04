@@ -35,6 +35,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.RememberMeServices;
@@ -63,8 +64,7 @@ public class SecurityJwtAuthzFilterConfiguration {
     @Configuration
     @ConditionalOnProperty(prefix = SecurityJwtAuthzProperties.PREFIX, value = "enabled", havingValue = "true")
 	@EnableConfigurationProperties({ SecurityBizProperties.class, SecurityJwtAuthcProperties.class, SecurityJwtAuthzProperties.class })
-    @Order(SecurityProperties.DEFAULT_FILTER_ORDER + 80)
-	static class JwtAuthzWebSecurityConfigurerAdapter extends WebSecurityBizConfigurerAdapter {
+	static class JwtAuthzWebSecurityCustomizerAdapter extends WebSecurityCustomizerAdapter {
 
     	private final SecurityBizProperties bizProperties;
     	private final SecurityJwtAuthcProperties authcProperties;
@@ -77,7 +77,7 @@ public class SecurityJwtAuthzFilterConfiguration {
     	private final RememberMeServices rememberMeServices;
 		private final SessionAuthenticationStrategy sessionAuthenticationStrategy;
 		
-		public JwtAuthzWebSecurityConfigurerAdapter(
+		public JwtAuthzWebSecurityCustomizerAdapter(
 				
 				SecurityBizProperties bizProperties,
 				SecuritySessionMgtProperties sessionMgtProperties,
@@ -154,9 +154,10 @@ public class SecurityJwtAuthzFilterConfiguration {
 			
 	        return authenticationFilter;
 	    }
-		
-	    @Override
-		public void configure(HttpSecurity http) throws Exception {
+
+		@Bean
+		@Order(SecurityProperties.DEFAULT_FILTER_ORDER + 80)
+		public SecurityFilterChain jwtAuthzSecurityFilterChain(HttpSecurity http) throws Exception {
 	    	
    	    	http.antMatcher(authzProperties.getPathPattern())
    	        	.exceptionHandling()
@@ -171,12 +172,13 @@ public class SecurityJwtAuthzFilterConfiguration {
    	    	super.configure(http, authzProperties.getCsrf());
    	    	super.configure(http, authzProperties.getHeaders());
 	    	super.configure(http);
-	    }
-	    
-	    @Override
-	    public void configure(WebSecurity web) throws Exception {
-	    	super.configure(web);
-	    }
+			return http.build();
+		}
+
+		@Override
+		public void customize(WebSecurity web) {
+			super.customize(web);
+		}
 	    
 	}
 

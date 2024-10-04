@@ -1,0 +1,4 @@
+org.springframework.security.boot.SecurityJwtAutoConfiguration
+org.springframework.security.boot.SecurityJwtAuthcFilterConfiguration
+org.springframework.security.boot.SecurityJwtAuthzFilterConfiguration
+org.springframework.security.boot.ReactiveSecurityJwtAutoConfiguration
