@@ -105,7 +105,7 @@ public class JwtServerAuthorizationSecurityContextRepository implements ServerSe
 		securityContext.setAuthentication(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		return Mono.just(securityContext)
-			.subscriberContext(ReactiveSecurityContextHolder.withSecurityContext(Mono.just(securityContext)))
+			.contextWrite(ReactiveSecurityContextHolder.withSecurityContext(Mono.just(securityContext)))
 			.cast(SecurityContext.class);
 	}
 	
