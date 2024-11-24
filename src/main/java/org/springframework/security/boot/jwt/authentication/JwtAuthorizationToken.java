@@ -1,9 +1,9 @@
 package org.springframework.security.boot.jwt.authentication;
 
-import java.util.Collection;
-
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Collection;
 
 /**
  * Jwt授权 (authorization) Token

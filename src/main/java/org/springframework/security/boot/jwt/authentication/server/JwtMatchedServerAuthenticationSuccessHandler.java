@@ -15,8 +15,7 @@
  */
 package org.springframework.security.boot.jwt.authentication.server;
 
-import java.nio.charset.StandardCharsets;
-
+import com.alibaba.fastjson2.JSONObject;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
@@ -33,10 +32,9 @@ import org.springframework.security.boot.jwt.authentication.JwtAuthenticationTok
 import org.springframework.security.boot.utils.SubjectUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.WebFilterExchange;
-
-import com.alibaba.fastjson2.JSONObject;
-
 import reactor.core.publisher.Mono;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * 4、JWT Authentication Success Handler For Reactive （负责认证成功处理）

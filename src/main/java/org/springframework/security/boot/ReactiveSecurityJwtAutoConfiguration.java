@@ -9,12 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.boot.biz.userdetails.JwtPayloadRepository;
-import org.springframework.security.boot.jwt.authentication.server.JwtMatchedServerAuthenticationEntryPoint;
-import org.springframework.security.boot.jwt.authentication.server.JwtMatchedServerAuthenticationFailureHandler;
-import org.springframework.security.boot.jwt.authentication.server.JwtMatchedServerAuthenticationSuccessHandler;
-import org.springframework.security.boot.jwt.authentication.server.JwtReactiveAuthenticationManager;
-import org.springframework.security.boot.jwt.authentication.server.JwtServerAuthenticationConverter;
-import org.springframework.security.boot.jwt.authentication.server.JwtServerAuthorizationSecurityContextRepository;
+import org.springframework.security.boot.jwt.authentication.server.*;
 import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
 import org.springframework.security.web.server.context.ServerSecurityContextRepository;
 

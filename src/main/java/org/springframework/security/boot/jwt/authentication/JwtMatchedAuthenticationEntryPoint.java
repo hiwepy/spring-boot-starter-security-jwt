@@ -20,11 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.boot.biz.SpringSecurityBizMessageSource;
 import org.springframework.security.boot.biz.authentication.nested.MatchedAuthenticationEntryPoint;
-import org.springframework.security.boot.jwt.exception.AuthenticationJwtExpiredException;
-import org.springframework.security.boot.jwt.exception.AuthenticationJwtIncorrectException;
-import org.springframework.security.boot.jwt.exception.AuthenticationJwtInvalidException;
-import org.springframework.security.boot.jwt.exception.AuthenticationJwtIssuedException;
-import org.springframework.security.boot.jwt.exception.AuthenticationJwtNotFoundException;
+import org.springframework.security.boot.jwt.exception.*;
 import org.springframework.security.boot.utils.SubjectUtils;
 import org.springframework.security.core.AuthenticationException;
 

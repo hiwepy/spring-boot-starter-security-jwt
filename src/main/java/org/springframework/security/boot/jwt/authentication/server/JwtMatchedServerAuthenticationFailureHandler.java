@@ -16,11 +16,7 @@
 package org.springframework.security.boot.jwt.authentication.server;
 
 import org.springframework.security.boot.biz.authentication.server.MatchedServerAuthenticationFailureHandler;
-import org.springframework.security.boot.jwt.exception.AuthenticationJwtExpiredException;
-import org.springframework.security.boot.jwt.exception.AuthenticationJwtIncorrectException;
-import org.springframework.security.boot.jwt.exception.AuthenticationJwtInvalidException;
-import org.springframework.security.boot.jwt.exception.AuthenticationJwtIssuedException;
-import org.springframework.security.boot.jwt.exception.AuthenticationJwtNotFoundException;
+import org.springframework.security.boot.jwt.exception.*;
 import org.springframework.security.boot.utils.SubjectUtils;
 import org.springframework.security.core.AuthenticationException;
 

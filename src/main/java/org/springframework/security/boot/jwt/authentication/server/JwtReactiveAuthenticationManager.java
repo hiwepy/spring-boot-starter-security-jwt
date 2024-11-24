@@ -15,10 +15,8 @@
  */
 package org.springframework.security.boot.jwt.authentication.server;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
+import com.github.hiwepy.jwt.JwtClaims;
+import com.github.hiwepy.jwt.JwtPayload;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -38,11 +36,11 @@ import org.springframework.security.core.SpringSecurityMessageSource;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.util.Assert;
-
-import com.github.hiwepy.jwt.JwtClaims;
-import com.github.hiwepy.jwt.JwtPayload;
-
 import reactor.core.publisher.Mono;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 3、JWT Authentication Manager For Reactive （负责校验 Authentication 对象）

@@ -15,10 +15,13 @@
  */
 package org.springframework.security.boot;
 
-import javax.servlet.FilterChain;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.security.boot.biz.property.SecurityHeaderCorsProperties;
@@ -26,10 +29,6 @@ import org.springframework.security.boot.biz.property.SecurityHeaderCsrfProperti
 import org.springframework.security.boot.biz.property.SecurityHeadersProperties;
 import org.springframework.security.boot.jwt.authentication.JwtAuthorizationProcessingFilter;
 import org.springframework.security.core.Authentication;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 @ConfigurationProperties(prefix = SecurityJwtAuthzProperties.PREFIX)
 @Getter

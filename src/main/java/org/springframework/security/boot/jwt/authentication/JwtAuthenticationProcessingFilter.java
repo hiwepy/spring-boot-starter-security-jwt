@@ -1,12 +1,10 @@
 package org.springframework.security.boot.jwt.authentication;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.boot.biz.authentication.PostRequestAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Jwt认证 (authentication)过滤器
