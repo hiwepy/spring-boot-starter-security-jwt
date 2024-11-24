@@ -27,9 +27,12 @@ import org.springframework.security.boot.jwt.authentication.JwtAuthenticationPro
 import org.springframework.security.boot.utils.WebSecurityUtils;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.CompositeAccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.RememberMeServices;
@@ -47,8 +50,9 @@ import java.util.stream.Collectors;
 public class SecurityJwtAuthcFilterConfiguration {
 
 	@Bean
-	public JwtAuthenticationProvider jwtAuthenticationProvider(UserDetailsServiceAdapter userDetailsService, PasswordEncoder passwordEncoder) {
-		return new JwtAuthenticationProvider(userDetailsService, passwordEncoder);
+	public JwtAuthenticationProvider jwtAuthenticationProvider(ObjectProvider<UserDetailsServiceAdapter> userDetailsServiceProvider,
+															   ObjectProvider<PasswordEncoder> passwordEncoderProvider) {
+		return new JwtAuthenticationProvider(userDetailsServiceProvider.getIfAvailable(), passwordEncoderProvider.getIfAvailable());
 	}
 	
 	@Configuration
@@ -57,7 +61,8 @@ public class SecurityJwtAuthcFilterConfiguration {
 	static class JwtAuthcWebSecurityCustomizerAdapter extends WebSecurityCustomizerAdapter {
     	
 		private final SecurityJwtAuthcProperties authcProperties;
-		
+
+		private final AccessDeniedHandler accessDeniedHandler;
     	private final LocaleContextFilter localeContextFilter;
 		private final AuthenticatingFailureCounter authenticatingFailureCounter;
 	    private final AuthenticationEntryPoint authenticationEntryPoint;
@@ -74,7 +79,8 @@ public class SecurityJwtAuthcFilterConfiguration {
 				SecurityBizProperties bizProperties,
    				SecurityJwtAuthcProperties authcProperties,
    				SecuritySessionMgtProperties sessionMgtProperties,
-   				
+
+				ObjectProvider<AccessDeniedHandler> accessDeniedHandlerProvider,
    				ObjectProvider<LocaleContextFilter> localeContextProvider,
    				ObjectProvider<AuthenticationProvider> authenticationProvider,
    				ObjectProvider<AuthenticationListener> authenticationListenerProvider,
@@ -95,7 +101,8 @@ public class SecurityJwtAuthcFilterConfiguration {
    			
    			this.captchaResolver = captchaResolverProvider.getIfAvailable();
 
-   			this.localeContextFilter = localeContextProvider.getIfAvailable();
+			this.accessDeniedHandler = new CompositeAccessDeniedHandler(accessDeniedHandlerProvider.stream().collect(Collectors.toList()));
+			this.localeContextFilter = localeContextProvider.getIfAvailable();
    			List<AuthenticationListener> authenticationListeners = authenticationListenerProvider.stream().collect(Collectors.toList());
    			this.authenticatingFailureCounter = WebSecurityUtils.authenticatingFailureCounter(authcProperties);
    			this.authenticationEntryPoint = WebSecurityUtils.authenticationEntryPoint(authcProperties, sessionMgtProperties, authenticationEntryPointProvider.stream().collect(Collectors.toList()));
@@ -150,19 +157,21 @@ public class SecurityJwtAuthcFilterConfiguration {
 		@Order(SecurityProperties.DEFAULT_FILTER_ORDER + 9)
 		public SecurityFilterChain jwtAuthcSecurityFilterChain(HttpSecurity http) throws Exception {
 
-			http = http.antMatcher(authcProperties.getPathPattern())
-   	        	.exceptionHandling()
-   	        	.authenticationEntryPoint(authenticationEntryPoint)
-   	        	.and()
-   	        	.httpBasic()
-   	        	.disable()
-   	        	.addFilterBefore(localeContextFilter, UsernamePasswordAuthenticationFilter.class)
-   	        	.addFilterBefore(authenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class); 
-   	    	
-   	    	super.configure(http, authcProperties.getCors());
-   	    	super.configure(http, authcProperties.getCsrf());
-   	    	super.configure(http, authcProperties.getHeaders());
-	    	super.configure(http);
+			http.securityMatcher(authcProperties.getPathPattern())
+					.exceptionHandling(configurer -> {
+						configurer.authenticationEntryPoint(authenticationEntryPoint)
+								.accessDeniedHandler(accessDeniedHandler)
+								.accessDeniedPage(authcProperties.getAccessDeniedUrl());
+					});
+			http.httpBasic(AbstractHttpConfigurer::disable);
+			http.addFilterBefore(localeContextFilter, UsernamePasswordAuthenticationFilter.class)
+					.addFilterBefore(authenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+
+			super.configure(http, authcProperties.getCors());
+			super.configure(http, authcProperties.getCsrf());
+			super.configure(http, authcProperties.getHeaders());
+			super.configure(http);
+
 			return http.build();
 		}
 

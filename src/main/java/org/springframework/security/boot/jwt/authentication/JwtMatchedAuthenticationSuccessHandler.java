@@ -1,6 +1,7 @@
 package org.springframework.security.boot.jwt.authentication;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -51,7 +52,7 @@ public class JwtMatchedAuthenticationSuccessHandler implements MatchedAuthentica
 		String message = messages.getMessage(AuthResponseCode.SC_AUTHC_SUCCESS.getMsgKey());
 		// 写出JSON
 		UserProfilePayload profilePayload = getPayloadRepository().getProfilePayload((AbstractAuthenticationToken) authentication, isCheckExpiry());
-		JSONObject.writeJSONString(response.getOutputStream(), AuthResponse.success(message, profilePayload));
+		JSON.writeTo(response.getOutputStream(), AuthResponse.success(message, profilePayload));
 
     }
 
